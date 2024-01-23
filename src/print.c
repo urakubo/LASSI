@@ -152,6 +152,7 @@ void Write_Trajectory(char *filename, long nGen) {
 //Writes the trajectory in LAMMPS format. To be viewed with VMD (Hopefully). Read the LAMMPS dump documentation for
 //the actual formate of the file
     FILE *fp;
+    float energy_anisotropic, energy_anisotropic_self, energy_isotropic;
     if (nGen == -1) {
         fp = fopen(filename, "w+"); //This always overwrites a previous file
     } else {
@@ -167,12 +168,16 @@ void Write_Trajectory(char *filename, long nGen) {
         fprintf(fp, "ITEM: BOX BOUNDS pp pp pp\n");//BCs are always periodic for now
         fprintf(fp, "0 %d\n0 %d\n0 %d\n", nBoxSize[0], nBoxSize[1], nBoxSize[2]);//Box dimensions
 
-        fprintf(fp, "ITEM: ATOMS id type mol x y z bP\n");//What we are printing
+        fprintf(fp, "ITEM: ATOMS id type mol x y z bP energy_anisotropic energy_anisotropic_self energy_isotropic\n");//What we are printing
 
         for (i = 0; i < tot_beads; i++) {
-            fprintf(fp, "%d %d %d %d %d %d %d\n", i, bead_info[i][BEAD_TYPE], bead_info[i][BEAD_CHAINID],
+            energy_anisotropic = Energy_Anisotropic(i);
+            energy_anisotropic_self = Energy_Anisotropic_Self(i);
+            energy_isotropic = Energy_Isotropic(i);
+            fprintf(fp, "%d %d %d %d %d %d %d %.5e %.5e %.5e\n", i, bead_info[i][BEAD_TYPE], bead_info[i][BEAD_CHAINID],
                     bead_info[i][POS_X], bead_info[i][POS_Y], bead_info[i][POS_Z],
-                    bead_info[i][BEAD_FACE]);
+                    bead_info[i][BEAD_FACE],
+                    energy_anisotropic, energy_anisotropic_self, energy_isotropic);
         }
 
     }
