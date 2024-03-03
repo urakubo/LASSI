@@ -168,16 +168,17 @@ void Write_Trajectory(char *filename, long nGen) {
         fprintf(fp, "ITEM: BOX BOUNDS pp pp pp\n");//BCs are always periodic for now
         fprintf(fp, "0 %d\n0 %d\n0 %d\n", nBoxSize[0], nBoxSize[1], nBoxSize[2]);//Box dimensions
 
-        fprintf(fp, "ITEM: ATOMS id type mol x y z bP energy_anisotropic energy_anisotropic_self energy_isotropic\n");//What we are printing
+        fprintf(fp, "ITEM: ATOMS id type mol x y z bP energy_anisotropic energy_anisotropic_self energy_isotropic energy_isotropic_self\n");//What we are printing
 
         for (i = 0; i < tot_beads; i++) {
             energy_anisotropic = Energy_Anisotropic(i);
             energy_anisotropic_self = Energy_Anisotropic_Self(i);
             energy_isotropic = Energy_Isotropic(i);
-            fprintf(fp, "%d %d %d %d %d %d %d %.5e %.5e %.5e\n", i, bead_info[i][BEAD_TYPE], bead_info[i][BEAD_CHAINID],
+            energy_isotropic_self = Energy_Isotropic_self(i);
+            fprintf(fp, "%d %d %d %d %d %d %d %.5e %.5e %.5e %.5e\n", i, bead_info[i][BEAD_TYPE], bead_info[i][BEAD_CHAINID],
                     bead_info[i][POS_X], bead_info[i][POS_Y], bead_info[i][POS_Z],
                     bead_info[i][BEAD_FACE],
-                    energy_anisotropic, energy_anisotropic_self, energy_isotropic);
+                    energy_anisotropic, energy_anisotropic_self, energy_isotropic, energy_isotropic_self);
         }
 
     }
